@@ -39,8 +39,8 @@ jsproxy_config({
   /**
    * 默认节点  
    */
-  node_default: 'aliyun-hk',
-
+   //node_default: 'aliyun-hk',
+  node_default: 'cfworker',
   /**
    * 加速节点
    */
