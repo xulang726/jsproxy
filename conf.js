@@ -1,48 +1,61 @@
 jsproxy_config({
-  // 当前配置的版本（服务端记录在日志中，方便排查问题）
-  ver: '51',
+  // 当前配置的版本（记录在日志中，用于排查问题）
+  ver: '84',
+
+  // 通过 CDN 加速常用网站的静态资源（实验中）
+  static_boost: {
+    enable: true,
+    ver: 29
+  },
 
   // 节点配置
   node_map: {
-    'aliyun-hk': {
-      label: '轻量云-香港',
-      lines: [
-        // 多条线路，负载均衡系统会从其中选一条
-        //'node-aliyun-hk-0.etherdream.com:8443',
-        //'node-aliyun-hk-1.etherdream.com:8443'
-        'silent-thunder-4e6a.hellophoto.workers.dev'
-        
-      ]
+    'demo-hk': {
+      label: '演示服务-香港节点',
+      lines: {
+        // 主机:权重
+        'node-aliyun-hk-0.etherdream.com:8443': 1,
+        'node-aliyun-hk-1.etherdream.com:8443': 2,
+        'node-aliyun-hk-2.etherdream.com:8443': 2,
+      }
     },
-    'aliyun-sg': {
-      label: '轻量云-新加坡',
-      lines: [
-        //'node-aliyun-sg.etherdream.com:8443'
-      ]
+    'demo-sg': {
+      label: '演示服务-新加坡节点',
+      lines: {
+        'node-aliyun-sg.etherdream.com:8443': 1,
+      },
     },
-    'bwh-la': {
-      label: '搬瓦工-洛杉矶',
-      lines: [
-        //'node-bwh-la.etherdream.com:8443'
-      ]
+    'mysite': {
+      label: '当前站点',
+      lines: {
+        [location.host]: 1,
+      }
     },
+    // 该节点用于加载大体积的静态资源
     'cfworker': {
-      label: 'Cloudflare Worker',
+      label: '',
       hidden: false,
-      lines: [
-        // 实验中...
-        // 参考 https://github.com/EtherDream/jsproxy/tree/master/cf-worker
-        //'node-cfworker.etherdream.com:8443'
-        'https://silent-thunder-4e6a.hellophoto.workers.dev'
-      ]
+      lines: {
+        // 收费版（高权重）
+        'node-cfworker.etherdream.com': 6,
+
+        // 免费版（低权重，分摊一些成本）
+        // 每个账号每天 10 万次免费请求，但有频率限制
+        //'a.007.workers.dev': 1,
+        //'a.hehe.workers.dev': 1,
+        //'a.lulu.workers.dev': 1,
+        //'shrill-unit-8594.jsproxy.workers.dev': 1,
+        'silent-thunder-4e6a.hellophoto.workers.dev': 1,
+      }
     }
   },
 
   /**
-   * 默认节点  
+   * 默认节点
    */
-   node_default: 'aliyun-hk',
-  //node_default: 'cfworker',
+  // node_default: 'mysite',
+  node_default: /jsproxy\.\w+$/.test(location.host) ? 'demo-hk' : 'mysite',
+
   /**
    * 加速节点
    */
@@ -52,9 +65,28 @@ jsproxy_config({
    * 静态资源 CDN 地址
    * 用于加速 `assets` 目录中的资源访问
    */
-  //assets_cdn: 'https://cdn.jsdelivr.net/gh/zjcqoo/zjcqoo.github.io@master/assets/',
-   //assets_cdn: 'https://silent-thunder-4e6a.hellophoto.workers.dev',
   assets_cdn: 'https://cdn.jsdelivr.net/gh/xulang726/xulang726.github.io@master/assets/',
+
   // 本地测试时打开，否则访问的是线上的
-  // assets_cdn: 'assets/'
+  // assets_cdn: 'assets/',
+
+  /**
+   * 自定义注入页面的 HTML
+   */
+  inject_html: '<!-- custom html -->',
+
+  /**
+   * URL 自定义处理（设计中）
+   */
+  url_handler: {
+    'https://www.baidu.com/img/baidu_resultlogo@2.png': {
+      replace: 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png'
+    },
+    'https://www.pornhub.com/': {
+      redir: 'https://php.net/'
+    },
+    'http://haha.com/': {
+      content: 'Hello World'
+    },
+  }
 })
