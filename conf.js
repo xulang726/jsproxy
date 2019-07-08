@@ -10,7 +10,7 @@ jsproxy_config({
         // 多条线路，负载均衡系统会从其中选一条
         //'node-aliyun-hk-0.etherdream.com:8443',
         //'node-aliyun-hk-1.etherdream.com:8443'
-        'https://silent-thunder-4e6a.hellophoto.workers.dev'
+        'silent-thunder-4e6a.hellophoto.workers.dev'
         
       ]
     },
