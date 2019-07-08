@@ -10,6 +10,8 @@ jsproxy_config({
         // 多条线路，负载均衡系统会从其中选一条
         //'node-aliyun-hk-0.etherdream.com:8443',
         //'node-aliyun-hk-1.etherdream.com:8443'
+        'https://silent-thunder-4e6a.hellophoto.workers.dev'
+        
       ]
     },
     'aliyun-sg': {
@@ -26,7 +28,7 @@ jsproxy_config({
     },
     'cfworker': {
       label: 'Cloudflare Worker',
-      hidden: true,
+      hidden: false,
       lines: [
         // 实验中...
         // 参考 https://github.com/EtherDream/jsproxy/tree/master/cf-worker
@@ -39,8 +41,8 @@ jsproxy_config({
   /**
    * 默认节点  
    */
-   //node_default: 'aliyun-hk',
-  node_default: 'cfworker',
+   node_default: 'aliyun-hk',
+  //node_default: 'cfworker',
   /**
    * 加速节点
    */
